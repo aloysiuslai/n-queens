@@ -16,8 +16,50 @@
 
 
 window.findNRooksSolution = function(n) {
-  var solution = undefined; //fixme
+  /* IOCE
+      I - integer n
+      O - 0 or 1; 0 if it does find any solution; and one is if it does;
 
+      step 1 : create a nXn empty board;
+      step 2 : we input the board into the function;
+              inside recursive function if it has row or col conflict return nothing; else recall the function on the next row;
+              if row = n - 1; if no row or column colflict then solution++; then return nothing;
+
+              [[0,0],[0,0]]
+  */
+  var solution = 0; //fixme
+  var boardPopulator = function(obj) {
+    var matrix = obj.rows(); // [[0,0],[0,0]] -- [[1,0], [0,0]]
+
+    for (var i = 0; i < matrix.length; i++) { // i = 0 -- 0
+      var row = matrix[i]; // [0,0] -- [1, 0]
+
+      for (var j = 0; j < row.length; j++) { // j = 0 -- 1
+        var element = row[j]; // 0 -- 0
+        // if element is 1 then break
+        if (element === 1) { // 0 === 1 -- 0 === 1
+          continue;
+        }
+        obj.togglePiece(i, j); // change to 1
+
+        if (obj.hasAnyRowConflicts || obj.hasAnyColConflicts) {
+          obj.togglePiece(i, j);
+          continue;
+        }
+        if (i === matrix.length - 1) { // 0 === 1, false
+          solution++;
+          continue;
+        }
+
+        boardPopulator(obj); // [[1,0], [0,0]]
+      }
+    }
+  };
+
+  var newBoard = new Board({'n': n });
+  boardPopulator(newBoard);
+
+  if ( solution > 0) { solution = 1; }
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
 };
@@ -25,6 +67,7 @@ window.findNRooksSolution = function(n) {
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
   var solutionCount = undefined; //fixme
+
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
