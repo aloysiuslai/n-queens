@@ -28,8 +28,10 @@ window.findNRooksSolution = function(n) {
               [[0,0],[0,0]]
   */
   var solution = 0; //fixme
+  var oneTracker = [];
   var boardPopulator = function(obj) {
     var matrix = obj.rows(); // [[0,0],[0,0]] -- [[1,0], [0,0]]
+    console.log(matrix, 'matrix start')
 
     for (var i = 0; i < matrix.length; i++) { // i = 0 -- 0
       var row = matrix[i]; // [0,0] -- [1, 0]
@@ -41,22 +43,39 @@ window.findNRooksSolution = function(n) {
           continue;
         }
         obj.togglePiece(i, j); // change to 1
+        console.log(row, 'row' + i)
 
-        if (obj.hasAnyRowConflicts || obj.hasAnyColConflicts) {
+        if (obj.hasAnyColConflicts()) {
+          console.log('C conflict' + i + ", " + j);
           obj.togglePiece(i, j);
           continue;
         }
-        if (i === matrix.length - 1) { // 0 === 1, false
-          solution++;
-          continue;
+
+        if (obj.hasAnyRowConflicts()) {
+          console.log('R conflict' + i + ", " + j);
+          obj.togglePiece(i, j);
+          break;
         }
 
+        if (i === matrix.length - 1) { // 0 === 1, false
+          solution++;
+
+          console.log(solution, 'solutions')
+          console.log(JSON.stringify(matrix), 'solution matrix')
+          obj.togglePiece(i, j);
+          // var popped = oneTracker.pop()
+          // obj.togglePiece(popped[0], popped[1])
+          continue;
+        }
+        oneTracker.push([i,j])
+        console.log(oneTracker, 'OneTracker');
         boardPopulator(obj); // [[1,0], [0,0]]
       }
     }
   };
 
   var newBoard = new Board({'n': n });
+  // console.log(newBoard.rows(), 'newBoard')
   boardPopulator(newBoard);
 
   if ( solution > 0) { solution = 1; }
